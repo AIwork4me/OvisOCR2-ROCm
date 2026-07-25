@@ -1,0 +1,7 @@
+[project]
+name = "ovisocr2-rocm"
+version = "1.0"
+license = { text = "Apache-2.0" }
+dependencies = ["omnidocbench-rocm>=0.2.0"]
+[project.optional-dependencies]
+dev = ["pytest"]

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local env / secrets
+adapter/setup/.env.local
+
+# Engine outputs (committed results live under results/omnidocbench/v16/<platform>/)
+/tmp/
+out/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db

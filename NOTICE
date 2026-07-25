@@ -1,0 +1,27 @@
+OvisOCR2-ROCm
+
+LICENSE OVERVIEW
+  Apache-2.0 — the top-level license of this repository, declared
+  in the sibling LICENSE file. Per ADR-0006 every model repo in the
+  omnidocbench-rocm zone ships this NOTICE.
+
+COMPONENT LICENSES
+  This adapter repo imports no model code and redistributes no weights; the
+  model is fetched per the setup script. List any bundled or vendored
+  third-party components (and their licenses) here as they are added. Example
+  form:
+
+    component-name       <version>      <SPDX license>
+    weights-foo          1.0            Apache-2.0   (downloaded, not vendored)
+
+  If there are none yet, leave this section as: "None declared yet."
+
+AFFILIATION / ENDORSEMENT DISCLAIMER
+  OvisOCR2-ROCm is an independent community adapter and is NOT
+  affiliated with, sponsored by, or endorsed by the upstream ovisocr2
+  project or its authors. All trademarks belong to their respective owners.
+
+COPYLEFT / AGPL STATUS
+  None. This repo contains no AGPL/SSPL/copyleft-licensed code. If a component
+  with copyleft terms is added later, its license and the obligation it creates
+  must be recorded here.

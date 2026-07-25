@@ -1,0 +1,11 @@
+# OmniDocBench v1.6 evaluation config for OvisOCR2-ROCm.
+dataset_version: v16
+platform: linux-rocm
+# Resolved by the engine at eval time; per-model repo only declares the shape.
+dataset_manifest: OmniDocBench/omnidocbench_v1_6/metadata.jsonl
+limit_pages: null
+metrics:
+  text_block: [Edit_dist]
+  reading_order: [Edit_dist]
+  table: [TEDS]
+  display_formula: [CDM]
