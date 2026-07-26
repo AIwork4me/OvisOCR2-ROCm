@@ -3,7 +3,7 @@
   "save_name": "ovisocr2_v16_quick_match_cdm",
   "engine": "vllm",
   "cdm": true,
-  "created_at_utc": "2026-07-26T03:37:13.492590+00:00",
+  "created_at_utc": "2026-07-26T06:21:51.556587+00:00",
   "prediction_count": 1651,
   "ok_pages": 1651,
   "failed_pages": 0,
@@ -11,10 +11,10 @@
   "metric_result_path": "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_metric_result.json",
   "run_stats_path": "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_run_stats.json",
   "readme_metrics": {
-    "text_edit_dist": 0.02560712987772043,
-    "reading_order_edit_dist": 0.1110868733139563,
-    "table_teds_percent": 94.74949408169702,
-    "formula_cdm_percent": 95.41218596780011
+    "text_edit_dist": 0.025979036044220756,
+    "reading_order_edit_dist": 0.1109989435858049,
+    "table_teds_percent": 94.81783132241132,
+    "formula_cdm_percent": 95.40686001313709
   },
   "metric_quality": {
     "formula_cdm": {
