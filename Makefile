@@ -2,46 +2,53 @@ PLATFORM ?= linux-rocm
 VERSION  ?= v16
 REVISION ?= 2b161d0
 MODEL_ID ?= ovisocr2
-# Optional backend/server config forwarded to the adapter (empty = use adapter_config.py defaults).
-BACKEND       ?=
-SERVER_URL    ?=
-API_MODEL_NAME ?=
-# Clean full run by default: CDM scoring ON, --skip-existing OFF.
-# Override: `make eval-linux RESUME=1` to resume an interrupted run; `CDM=0` to
-# disable CDM scoring for a quick debug score.
+VENV     ?= /root/venvs/vllm-0221b
+# Real eval defaults to the vLLM backend; smoke is opt-in via demo-smoke.
+BACKEND  ?= vllm
 CDM ?= 1
 RESUME ?= 0
 CDM_FLAG = $(if $(filter 1,$(CDM)),--cdm,)
 RESUME_FLAG = $(if $(filter 1,$(RESUME)),--skip-existing,)
 
-setup-linux:
-	bash adapter/setup/00-install-deps.sh
-setup-windows:
-	powershell -ExecutionPolicy Bypass -File adapter\setup\00-install-deps.ps1
+PY = $(VENV)/bin/python
 
-demo:
-	OUT=$$(mktemp -d); omnidocbench-rocm infer --adapter adapter/run_adapter.py --img-dir examples --out-dir $$OUT --platform $(PLATFORM); ls $$OUT
+.PHONY: install-dev setup-linux check smoke-test demo-smoke demo-real eval-linux eval-windows conformance build clean publish
+
+install-dev:
+	pip install -e ".[dev]"
+
+setup-linux:
+	VENV=$(VENV) bash adapter/setup/00-install-deps.sh
+
+check:
+	ruff check . && pytest -q && python -m build && omnidocbench-rocm conformance .
+
+smoke-test:
+	python -m pytest
+
+demo-smoke:
+	omnidocbench-rocm infer --adapter adapter/run_adapter.py --img-dir examples --out-dir $$(mktemp -d) --platform $(PLATFORM) --backend smoke
+
+demo-real:
+	HIP_VISIBLE_DEVICES=0 $(PY) adapter/run_adapter.py --img-dir examples --out-dir /tmp/ovisocr2-demo --platform linux-rocm --backend vllm --limit-pages 1
 
 eval-linux:
 	omnidocbench-rocm run --stage all --platform linux-rocm --version $(VERSION) --revision $(REVISION) \
-	  --adapter adapter/run_adapter.py --model-id $(MODEL_ID) \
-	  $(if $(BACKEND),--backend $(BACKEND)) \
-	  $(if $(SERVER_URL),--server-url $(SERVER_URL)) \
-	  $(if $(API_MODEL_NAME),--api-model-name $(API_MODEL_NAME)) \
+	  --adapter adapter/run_adapter.py --model-id $(MODEL_ID) --backend $(BACKEND) \
 	  --git-commit $$(git rev-parse HEAD) --results-dir results/omnidocbench/$(VERSION)/linux-rocm \
 	  $(CDM_FLAG) $(RESUME_FLAG)
 
 eval-windows:
-	omnidocbench-rocm run --stage all --platform windows-hip --version $(VERSION) --revision $(REVISION) \
-	  --adapter adapter/run_adapter.py --model-id $(MODEL_ID) \
-	  $(if $(BACKEND),--backend $(BACKEND)) \
-	  $(if $(SERVER_URL),--server-url $(SERVER_URL)) \
-	  $(if $(API_MODEL_NAME),--api-model-name $(API_MODEL_NAME)) \
-	  --git-commit $$(git rev-parse HEAD) --results-dir results/omnidocbench/$(VERSION)/windows-hip \
-	  $(CDM_FLAG) $(RESUME_FLAG)
+	@echo "windows-hip real inference is unsupported (community-wanted: no Qwen3-Next GDN HIP-SDK path)."; exit 1
 
-publish:
+conformance:
 	omnidocbench-rocm conformance . && echo CONFORMANT
 
-smoke-test:
-	python -m pytest
+build:
+	python -m build
+
+clean:
+	rm -rf build dist *.egg-info .pytest_cache .ruff_cache adapter/__pycache__ tests/__pycache__
+	find . -name '*.pyc' -delete
+
+publish: conformance
