@@ -32,8 +32,11 @@ def main(argv=None) -> int:
         import torch
 
         _ok(f"torch {torch.__version__}")
-    except (ImportError, RuntimeError, OSError) as e:
-        rc = _fail(f"torch import: {e}")
+    except (ImportError, RuntimeError, OSError):
+        if a.cpu_only:
+            print("  [INFO] torch not installed (OK for --cpu-only; required for real inference)")
+        else:
+            rc = _fail("torch import failed")
 
     if not a.cpu_only:
         try:
