@@ -73,14 +73,22 @@ omnidocbench-rocm score --platform linux-rocm --version v16 \
   --run-stats predictions/ovisocr2/_run_stats.json --dataset-dir "$DATASET" --cdm
 ```
 
-For a faster wall-clock on the full set, shard across two GPUs (predictions are
-identical — each page is independent and greedy):
+For a faster wall-clock on the full set, shard **deterministically** across two
+GPUs (predictions are identical — each page is independent and greedy). Each shard
+writes its own subdir; merge validates full coverage:
 
 ```bash
-for s in 0 1; do HIP_VISIBLE_DEVICES=$s python adapter/run_adapter.py \
+for s in 0 1; do HIP_VISIBLE_DEVICES=$s "$VENV/bin/python" adapter/run_adapter.py \
   --img-dir "$DATASET/images" --out-dir predictions/ovisocr2 \
-  --platform linux-rocm --backend vllm --skip-existing & done; wait
+  --platform linux-rocm --backend vllm --num-shards 2 --shard-index $s & done; wait
+python scripts/merge-shards.py --input-root predictions/ovisocr2 \
+  --out-dir predictions/ovisocr2-merged --expected-images "$DATASET/images"
+# Score from predictions/ovisocr2-merged.
 ```
+
+(The earlier `--skip-existing &` loop was NOT real sharding — two processes raced on
+the same out-dir. The `--num-shards`/`--shard-index` split above is deterministic
+and merge-validated.)
 
 ## Expected output
 
@@ -102,9 +110,10 @@ formulas (median CDM 1.0) — **version-independent** (running on the card's pin
 vLLM 0.22.1 reproduces 0.19.0's CDM within noise: 0.8514 vs 0.8517 on the
 affected pages). The model groups multi-formula systems differently than the GT
 annotation; not closable via recipe or version. See `docs/known-gaps.md`. This is
-still **#1 in the zone**. Full-set inference ≈ 1 h on one W7900 (first run adds a
-~10-20 min one-time Triton/GDN kernel compile, cached after); scoring (incl. CDM)
-≈ 30–45 min.
+still **#1 in the zone**. Full-set inference is **observed** at ≈ 1 h on one W7900 (a manual measurement, not
+CI-derived; per-page latency is not recorded in the published bundle; the first run
+adds a ~10-20 min one-time Triton/GDN kernel compile, cached after); scoring
+(incl. CDM) ≈ 30–45 min.
 
 ## If it fails
 

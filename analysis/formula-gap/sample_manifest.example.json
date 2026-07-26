@@ -1,0 +1,13 @@
+{
+  "note": "Fill when re-running the vLLM 0.19.0 vs 0.22.1 A/B. No fabricated results.",
+  "weights_revision": "65c619d374b55d4152e85150fc1b003700bc1f0c",
+  "prompt": "verbatim OvisOCR2 card prompt (adapter/run_adapter.py:_PROMPT)",
+  "pixel_preprocess": {"min_pixels": 200704, "max_pixels": 8294400},
+  "batch_size": 8,
+  "scoring_commit": "opendatalab/OmniDocBench@2b161d0",
+  "only_variable": "vLLM version (0.19.0 vs 0.22.1) and/or GDN prefill backend",
+  "versions": {
+    "v0.19.0": {"per_formula_cdm": null, "overall": 95.87, "formula_cdm": 95.41},
+    "v0.22.1": {"per_formula_cdm": null, "overall": 95.88, "formula_cdm": 95.41}
+  }
+}

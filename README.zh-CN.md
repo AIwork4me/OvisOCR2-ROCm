@@ -29,15 +29,17 @@ OvisOCR2 是本专区**参数量最小**、**得分最高**的模型，也是首
 （构建 vLLM v0.22.1 + ROCm 补丁，为 gfx110X-all 构建，torch 2.10+rocm7.12）。
 
 ```bash
-# 1. ROCm vLLM 虚拟环境（一次性，构建约 1-2 小时）：
-bash <(curl -sSL https://raw.githubusercontent.com/AIwork4me/rocm-vllm-installer/main/install.sh)
+# 1. ROCm vLLM 0.22.1 虚拟环境（一次性，构建约 1-2 小时）。请本地克隆安装器
+#    以获得其 patches/ 目录（不要用 curl|bash）：
+git clone --branch v1.0.0 https://github.com/AIwork4me/rocm-vllm-installer.git
+cd rocm-vllm-installer && VENV=/root/venvs/vllm-0221b VLLM_VERSION=v0.22.1 bash install.sh
 # 验证 qwen3_5 已注册：
-python -c "from vllm.model_executor.models.registry import ModelRegistry as m; \
+/root/venvs/vllm-0221b/bin/python -c "from vllm.model_executor.models.registry import ModelRegistry as m; \
   print('Qwen3_5ForConditionalGeneration' in m.get_supported_archs())"   # -> True
 
-# 2. 本仓库 + 引擎：
-pip install -e ".[dev]"
-pip install omnidocbench-rocm        # 引擎（omnidocbench-rocm CLI 与类型）
+# 2. 引擎（omnidocbench-rocm，GitHub 同源项目，不在 PyPI；装入上述 venv）+ 本仓库：
+/root/venvs/vllm-0221b/bin/pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/omnidocbench-rocm.git@v0.3.2"
+pip install -e ".[dev]"        # 本仓库（用于测试 / conformance）
 
 # 3. 权重（HF 或 ModelScope，二者一致；国内推荐 ModelScope）：
 python -c "from modelscope import snapshot_download; \
@@ -89,8 +91,8 @@ make eval-linux        # = omnidocbench-rocm run --stage all ...（推理 + 打�
 ## 已知限制（Known Gaps）
 
 - **`windows-hip`：** `community-wanted`。OvisOCR2 的 Qwen3-Next GDN 架构暂无 GGUF/HIP-SDK 服务路径，Windows 暂缓。
-- **公式 CDM 差距（模型固有）：** 综合 95.88 vs 论文 96.58；0.70 分差距全在公式 CDM（95.41 vs 97.53）。系统化调试验证这是**模型固有**的公式分段差异（约 22/2352 个公式，中位 CDM 1.0）——**与版本无关**（本仓库运行模型卡指定的 vLLM 0.22.1；全量 1651 页上 0.22.1 与 0.19.0 的 CDM 完全一致：均为 95.41）。无法通过 recipe 或版本修复；详见 [`docs/known-gaps.md`](docs/known-gaps.md)。
-- **吞吐：** eager 模式 + ROCm 分页注意力回退，吞吐中等；单卡全量约 1 小时（双卡分片约 30 分钟）。非 eager/cudagraph 调优为后续工作。
+- **公式 CDM 差距（模型固有）：** 综合 95.88 vs 论文 96.58；0.70 分差距全在公式 CDM（95.41 vs 97.53）。系统化调试验证这是**模型固有**的公式分段差异（约 22/2352 个公式，中位 CDM 1.0）——**与版本无关**（本仓库运行模型卡指定的 vLLM 0.22.1；全量 1651 页上 0.22.1 与 0.19.0 的 CDM 完全一致：均为 95.41；0.19.0 综合 95.87、0.22.1 综合 95.88）。无法通过 recipe 或版本修复；详见 [`docs/known-gaps.md`](docs/known-gaps.md)。
+- **吞吐：** eager 模式 + ROCm 分页注意力回退，吞吐中等；单卡全量**实测**约 1 小时（双卡分片约 30 分钟）——人工观测值，非 CI 测得；已发布产物中不记录逐页延迟。非 eager/cudagraph 调优为后续工作。
 - **`verified` 等级：** 暂无 —— 需维护者 Docker 复现（开发环境无 Docker）。本条目为 `community`（自证、CI 校验）；见 [`docs/known-gaps.md`](docs/known-gaps.md)。
 
 ## 许可证
