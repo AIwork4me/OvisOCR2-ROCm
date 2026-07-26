@@ -28,4 +28,4 @@ dataset:
   version: "v1.6"
   revision: "2b161d0"
   gt_sha256: "a45cd84b04ad8b793e775089640e6b681209abea33ead54c1828ddca35fae496"
-git_commit: "139959cf1c123d9ca22cf6c14f9623fe0859a9fc"
+git_commit: "fdef86674d1519301ff9c8a29133750f173180a9"
