@@ -20,7 +20,7 @@ classifiers = [
 # omnidocbench-rocm is a sibling GitHub project, NOT published to PyPI, so a hard
 # ==pin here would break every install. The exact engine version that produced the
 # published results (0.3.2) is pinned via the CI git tag and recorded in REPRO.yaml.
-dependencies = ["omnidocbench-rocm>=0.2.0"]
+dependencies = ["omnidocbench-rocm>=0.2.0", "Pillow>=10"]
 
 [project.urls]
 Repository = "https://github.com/AIwork4me/OvisOCR2-ROCm"
