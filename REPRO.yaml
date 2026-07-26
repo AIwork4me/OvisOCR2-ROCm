@@ -6,7 +6,7 @@ schema_version: 1
 model_id: "ovisocr2"
 platform: "linux-rocm"
 backend: "vllm"
-overall: 96.6                 # TODO_BELOW: replace with the measured full-set Overall
+overall: 95.87                # measured full-set Overall (1651 pages, incl. CDM)
 tolerance: 0.5
 command: >-
   OVISOCR2_WEIGHTS=/root/models/OvisOCR2 HIP_VISIBLE_DEVICES=0
@@ -28,4 +28,4 @@ dataset:
   version: "v1.6"
   revision: "2b161d0"
   gt_sha256: "a45cd84b04ad8b793e775089640e6b681209abea33ead54c1828ddca35fae496"
-git_commit: "TODO_BELOW"      # first OvisOCR2-ROCm commit anchoring this lockfile
+git_commit: "139959cf1c123d9ca22cf6c14f9623fe0859a9fc"

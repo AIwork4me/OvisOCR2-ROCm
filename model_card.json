@@ -6,14 +6,27 @@
   "badge": {"linux-rocm": "community", "windows-hip": "community-wanted"},
   "eval_date": "2026-07-25",
   "omnidocbench_version": "v1.6",
-  "overall": null,
-  "submetrics": {},
+  "overall": 95.87,
+  "submetrics": {
+    "text_edit_dist": 0.0256,
+    "reading_order_edit_dist": 0.1111,
+    "table_teds_percent": 94.75,
+    "table_teds_structure_only_percent": 97.13,
+    "formula_cdm_percent": 95.41
+  },
   "hardware": {
     "gpu": "AMD gfx1100 (Radeon PRO W7900)",
     "vram": "48 GB",
     "rocm_driver": "7.2"
   },
-  "artifacts": {},
+  "artifacts": {
+    "provenance": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_provenance.json",
+    "run_summary": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_run_summary.json",
+    "metric_result": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_metric_result.json",
+    "run_stats": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_run_stats.json",
+    "prediction_manifest": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_prediction_manifest.json",
+    "dataset_identity": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_dataset_identity.json"
+  },
   "backend": "vllm",
   "execution_provider": "",
   "backend_family": "rocm",
@@ -24,7 +37,7 @@
   "official_reference": {
     "source": "https://arxiv.org/abs/2607.13639",
     "source_overall": 96.58,
-    "delta_pp": null
+    "delta_pp": -0.71
   },
-  "note": "First end-to-end model to top OmniDocBench v1.6 (Overall 96.58, arXiv 2607.13639). 0.8B params: Qwen3-VL vision encoder on a Qwen3-Next GDN (gated-delta-net) hybrid backbone (model_type qwen3_5). Served in-process via vLLM on gfx1100; GDN runs via the Triton/FLA prefill kernel on ROCm. submetrics/overall/artifacts are filled at publish time."
+  "note": "First end-to-end model to top OmniDocBench v1.6 (paper Overall 96.58, arXiv 2607.13639). 0.8B params: Qwen3-VL vision encoder on a Qwen3-Next GDN (gated-delta-net) hybrid backbone (model_type qwen3_5). Served in-process via vLLM 0.19.0 on gfx1100; GDN runs via the Triton/FLA prefill kernel. Reproduced Overall 95.87 on the full 1651-page set — #1 in the zone. Three of four metrics are essentially perfect (text 0.0256 vs 0.025, reading-order 0.1111 vs 0.111, table TEDS 94.75 vs 94.76). The 0.71-pt gap vs the paper is entirely formula CDM (95.41 vs 97.53), a verified vLLM-0.19.0-vs-0.22.1 formula-segmentation artifact on 26 of 2352 formulas (median CDM 1.0); closing it requires a vLLM 0.22.1 ROCm build (the card's pinned version), a follow-on."
 }

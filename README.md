@@ -10,7 +10,9 @@ order — in one pass. It set a new state of the art on
 [OmniDocBench v1.6](https://arxiv.org/abs/2607.13639) at **Overall 96.58**, the
 first end-to-end model to beat the pipeline methods that previously led the
 board. This repo runs it **on AMD ROCm via vLLM** (gfx1100 / Radeon PRO W7900),
-with full-set evaluation reproducing the paper's numbers within tolerance.
+with full-set Overall **95.87** — the **#1 score in the zone** (3/4 metrics
+essentially perfect; the small CDM gap vs the paper's 96.58 is a verified
+vLLM-version artifact, see `docs/known-gaps.md`).
 
 - **Model:** `ovisocr2` v1.0 — Apache-2.0, no commercial restriction
 - **Backend:** vLLM 0.19.0 (ROCm), in-process (matches the upstream model card)
@@ -27,7 +29,7 @@ with full-set evaluation reproducing the paper's numbers within tolerance.
 
 | Model | Params | Backend | Overall | Badge |
 |---|---|---|---|---|
-| **OvisOCR2 (this repo)** | **0.8B** | **vLLM/ROCm** | **96.6** | community |
+| **OvisOCR2 (this repo)** | **0.8B** | **vLLM/ROCm** | **95.87** | community |
 | PaddleOCR-VL-1.6 | 0.9B | llama.cpp/HIP | 95.77 | community |
 | MinerU2.5 | 1.2B | vLLM/ROCm | 95.56 | community |
 | HunyuanOCR | 1B | vLLM/ROCm | 93.64 | community |

@@ -2,7 +2,7 @@
 
 **OvisOCR2 跑在 AMD Radeon 上 —— 首个登顶 OmniDocBench v1.6 的端到端模型，现已原生运行于 ROCm。**
 
-[OvisOCR2](https://huggingface.co/ATH-MaaS/OvisOCR2)（ATH-MaaS / 阿里，Apache-2.0，0.8B 参数）是一个紧凑的端到端页面解析模型：输入一页文档图像，它一次性输出结构化 Markdown——文本、表格、公式、阅读顺序。它在 [OmniDocBench v1.6](https://arxiv.org/abs/2607.13639) 上取得 **综合得分 96.58** 的新纪录，是首个超越此前由流水线方法主导的排行榜的端到端模型。本仓库将其运行于 **AMD ROCm 上的 vLLM**（gfx1100 / Radeon PRO W7900），并以全量评测在容差范围内复现了论文指标。
+[OvisOCR2](https://huggingface.co/ATH-MaaS/OvisOCR2)（ATH-MaaS / 阿里，Apache-2.0，0.8B 参数）是一个紧凑的端到端页面解析模型：输入一页文档图像，它一次性输出结构化 Markdown——文本、表格、公式、阅读顺序。它在 [OmniDocBench v1.6](https://arxiv.org/abs/2607.13639) 上取得 **综合得分 96.58** 的新纪录，是首个超越此前由流水线方法主导的排行榜的端到端模型。本仓库将其运行于 **AMD ROCm 上的 vLLM**（gfx1100 / Radeon PRO W7900），全量复现综合得分 **95.87** ——**专区内排名第一**（4 项指标中 3 项基本完美；公式 CDM 与论文 96.58 的小差距是已查明的 vLLM 版本差异，详见 `docs/known-gaps.md`）。
 
 - **模型：** `ovisocr2` v1.0 —— Apache-2.0，无商用限制
 - **后端：** vLLM 0.19.0（ROCm），进程内加载（与上游模型卡一致）
@@ -15,7 +15,7 @@
 
 | 模型 | 参数量 | 后端 | 综合得分 | 徽章 |
 |---|---|---|---|---|
-| **OvisOCR2（本仓库）** | **0.8B** | **vLLM/ROCm** | **96.6** | community |
+| **OvisOCR2（本仓库）** | **0.8B** | **vLLM/ROCm** | **95.87** | community |
 | PaddleOCR-VL-1.6 | 0.9B | llama.cpp/HIP | 95.77 | community |
 | MinerU2.5 | 1.2B | vLLM/ROCm | 95.56 | community |
 | HunyuanOCR | 1B | vLLM/ROCm | 93.64 | community |

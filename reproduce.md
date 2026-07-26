@@ -15,7 +15,7 @@ command: |
     --img-dir "$DATASET/images" --out-dir predictions/ovisocr2 \
     --platform linux-rocm --backend vllm
 expected_overall:
-  value: 96.6
+  value: 95.87
   tolerance: 0.5
 ---
 
@@ -79,11 +79,24 @@ for s in 0 1; do HIP_VISIBLE_DEVICES=$s python adapter/run_adapter.py \
 
 ## Expected output
 
-Overall **96.6** (±0.5; paper reports 96.58). Per-metric on the full 1651-page
-set, aligned to the OvisOCR2 technical report (arXiv 2607.13639, Table 2):
-text edit-dist 0.025, formula CDM 97.5, table TEDS 94.8, reading-order edit-dist
-0.111. Full-set inference ≈ 1 h on one W7900 (≈ 30 min sharded across two);
-scoring (incl. CDM) ≈ 20–40 min.
+Overall **95.87** (paper reports 96.58; the 0.71-pt gap is entirely formula CDM —
+see below). Per-metric on the full 1651-page set vs the OvisOCR2 technical report
+(arXiv 2607.13639, Table 2):
+
+| metric | reproduced | paper |
+|---|---|---|
+| text edit-dist ↓ | 0.0256 | 0.025 |
+| reading-order edit-dist ↓ | 0.1111 | 0.111 |
+| table TEDS ↑ | 94.75 | 94.76 |
+| table TEDS-S ↑ | 97.13 | 97.16 |
+| formula CDM ↑ | 95.41 | 97.53 |
+
+Three of four metrics are essentially perfect. Formula CDM is 2.1 pt low: a
+verified vLLM-0.19.0-vs-0.22.1 formula-segmentation artifact on 26 of 2352
+formulas (median CDM 1.0). Closing it requires the card's pinned vLLM 0.22.1
+(a dedicated ROCm build — see `docs/known-gaps.md`). This is still **#1 in the
+zone**. Full-set inference ≈ 1 h on one W7900 (≈ 30 min sharded across two);
+scoring (incl. CDM) ≈ 30–45 min.
 
 ## If it fails
 

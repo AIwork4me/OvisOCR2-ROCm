@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-07-26T03:37:13.495533+00:00",
+  "git_commit": "139959cf1c123d9ca22cf6c14f9623fe0859a9fc",
+  "engine_version": "0.3.2",
+  "model_id": "ovisocr2",
+  "platform": "linux-rocm",
+  "vlm_server_url": "",
+  "api_model_name": "",
+  "adapter_command": "python adapter/run_adapter.py --backend vllm",
+  "scoring_config_path": ".",
+  "dataset_manifest_path": "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_dataset_identity.json",
+  "dataset_revision": "2b161d0",
+  "prediction_dir": "/root/ovis_spike/ovisocr2",
+  "page_count": 1651,
+  "ok_pages": 1651,
+  "failed_pages": 0,
+  "fallback_pages": 0,
+  "metric_result_paths": [
+    "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_metric_result.json"
+  ],
+  "run_summary_paths": [
+    "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_run_summary.json"
+  ],
+  "run_stats_path": "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_run_stats.json",
+  "backend": "vllm",
+  "packaging_commit": "139959cf1c123d9ca22cf6c14f9623fe0859a9fc",
+  "prediction_source_commit": "",
+  "prediction_source_command": "",
+  "prediction_source_run_manifest": "",
+  "prediction_manifest_path": "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_prediction_manifest.json",
+  "prediction_manifest_sha256": "f64e7ce0aaa2e3729749cdfd0198a17de66ecbc7d5be579a5e207ffd4cce1d38",
+  "dataset_identity_path": "/workspace/OvisOCR2-ROCm/results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_dataset_identity.json",
+  "source_metric_result_path": "/root/datasets/OmniDocBench/result/preds_ovisocr2_full_quick_match_metric_result.json",
+  "source_run_stats_path": "/root/ovis_spike/preds_ovisocr2_full/_run_stats.json",
+  "source_prediction_dir": "/root/ovis_spike/ovisocr2",
+  "migration_type": ""
+}
