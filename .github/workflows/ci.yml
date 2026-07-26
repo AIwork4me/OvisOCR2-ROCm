@@ -1,10 +1,41 @@
+name: CI
+
 on: [push, pull_request]
+
+permissions:
+  contents: read
+
 jobs:
-  smoke:
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: {python-version: '3.11'}
-      - run: pip install -e ".[dev]" && pip install omnidocbench-rocm
-      - run: python -c "from omnidocbench_rocm.types import RunSummary"  # engine importable
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      # omnidocbench-rocm is a sibling GitHub project (not on PyPI); install the
+      # exact pinned tag that produced the published results before this repo.
+      - run: pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/omnidocbench-rocm.git@v0.3.2"
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -q
+      - run: python -m build
+      - run: omnidocbench-rocm conformance .
+      - run: python scripts/check-environment.py --cpu-only
+      - name: Smoke demo
+        run: bash examples/run_demo.sh
+      - name: README path sanity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for f in ["examples/demo.png", "adapter/run_adapter.py",
+                    "eval/configs/omnidocbench_v16.yaml", "REPRO.yaml"]:
+              assert (Path(".") / f).exists(), f"README references missing path: {f}"
+          print("README paths OK")
+          PY

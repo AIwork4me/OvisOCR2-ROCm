@@ -1,7 +1,43 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "ovisocr2-rocm"
 version = "1.0"
+description = "OvisOCR2 (0.8B) end-to-end document parser on AMD ROCm via vLLM — an omnidocbench-rocm adapter."
+readme = "README.md"
 license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+authors = [{ name = "AIwork4me" }]
+classifiers = [
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# omnidocbench-rocm is a sibling GitHub project, NOT published to PyPI, so a hard
+# ==pin here would break every install. The exact engine version that produced the
+# published results (0.3.2) is pinned via the CI git tag and recorded in REPRO.yaml.
 dependencies = ["omnidocbench-rocm>=0.2.0"]
+
+[project.urls]
+Repository = "https://github.com/AIwork4me/OvisOCR2-ROCm"
+
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest>=8", "ruff>=0.6", "build>=1.2", "pyyaml>=6"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["adapter"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
