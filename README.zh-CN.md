@@ -1,5 +1,7 @@
 # OvisOCR2-ROCm
 
+[![CI](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml/badge.svg)](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml)
+
 **OvisOCR2 跑在 AMD Radeon 上 —— 首个登顶 OmniDocBench v1.6 的端到端模型，现已原生运行于 ROCm。**
 
 [OvisOCR2](https://huggingface.co/ATH-MaaS/OvisOCR2)（ATH-MaaS / 阿里，Apache-2.0，0.8B 参数）是一个紧凑的端到端页面解析模型：输入一页文档图像，它一次性输出结构化 Markdown——文本、表格、公式、阅读顺序。它在 [OmniDocBench v1.6](https://arxiv.org/abs/2607.13639) 上取得 **综合得分 96.58** 的新纪录，是首个超越此前由流水线方法主导的排行榜的端到端模型。本仓库将其运行于 **AMD ROCm 上的 vLLM**（gfx1100 / Radeon PRO W7900），全量复现综合得分 **95.88** ——**专区内排名第一**（4 项指标中 3 项基本完美；公式 CDM 与论文 96.58 的小差距是已查明的**模型固有**分段差异，与 vLLM 版本无关，详见 `docs/known-gaps.md`）。

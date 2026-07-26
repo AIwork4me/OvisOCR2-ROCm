@@ -1,5 +1,7 @@
 # OvisOCR2-ROCm
 
+[![CI](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml/badge.svg)](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml)
+
 **OvisOCR2 on AMD Radeon — the first end-to-end model to top OmniDocBench v1.6,
 now running natively on ROCm.**
 
