@@ -10,14 +10,20 @@ Docker-repro item; the rest are scoping notes, not defects.
   path for it yet (llama.cpp does not implement qwen3_5/GDN), so Windows is
   deferred until one exists. Linux/ROCm is the only first-class platform here.
 
-- **vLLM 0.19.0, not the card's 0.22.1.** The ROCm build in
-  `vllm-build-gfx110x` is vLLM v0.19.0 (the first tagged release whose
-  `model_executor/models/qwen3_5.py` ships). v0.19.0 lacks the
-  `gdn_prefill_backend` constructor arg the upstream card passes
-  (`="triton"`); this adapter uses vLLM's default GDN prefill path. The
-  100-page subset alignment (text 0.033 vs 0.025, reading-order 0.112 vs 0.111)
-  confirms outputs match the paper within tolerance, but a 0.1–0.3 pt Overall
-  drift vs the card's exact version is possible.
+- **Formula CDM gap — model-inherent, version-independent (verified).** Overall
+  95.88 vs the paper's 96.58; the 0.70-pt gap is **entirely formula CDM** (95.41
+  vs 97.53) on ~22 of 2352 formulas (median CDM 1.0). The model groups
+  multi-formula systems (e.g. a derivation plus its (1)/(2) cases) as separate
+  display blocks, while the OmniDocBench GT annotates them as one — the scorer's
+  `split_equation_arrays` then mis-aligns those few formulas. Two rounds of
+  systematic debugging ruled out recipe, post-processing, toolchain, and
+  **version**: the repo runs the card's pinned vLLM 0.22.1 (`gdn_prefill_backend=
+  'triton'`), and on the **full 1651-page set** 0.22.1 reproduces 0.19.0's CDM
+  **exactly** (95.41 on both); a 19-page A/B earlier showed 0.8514 vs 0.8517.
+  The gap is the model's segmentation vs the GT annotation, not a serving
+  artifact — not closable via recipe or version. The repo uses vLLM 0.22.1 (built
+  via `rocm-vllm-installer` with `VLLM_VERSION=v0.22.1`; note the extra
+  `_C_stable_libtorch` cmake target where `silu_and_mul` registers).
 
 ## Throughput
 
@@ -34,11 +40,8 @@ Docker-repro item; the rest are scoping notes, not defects.
   Promotion to `verified` requires a maintainer Docker reproduction
   (`Dockerfile.repro` + `VERIFIED.yaml` + `check_verified.py`), which needs a
   Docker-capable box (absent in the dev environment). The Docker image would
-  need to embed the source-built ROCm vLLM 0.19.0 — non-trivial, hence deferred.
+  need to embed the source-built ROCm vLLM 0.22.1 — non-trivial, hence deferred.
 
-- **Subset table-TEDS observation.** On a 100-page / 42-table subset, table TEDS
-  measured ~89% vs the paper's 94.8%. Small-sample noise is the likely cause
-  (the full ~665-table set is the authoritative number — see `model_card.json`).
-  If the full-set TEDS stays ~5 pp low, it is a candidate recipe knob to revisit
-  (table HTML format vs the matcher); it does not threaten the Overall (within
-  the 0.5 tolerance either way).
+- **Subset table-TEDS observation (resolved).** A 100-page / 42-table subset
+  measured table TEDS ~89% vs the paper's 94.8 — confirmed to be small-sample
+  noise: the full ~665-table set scores 94.75 (≈ paper 94.76). No action needed.

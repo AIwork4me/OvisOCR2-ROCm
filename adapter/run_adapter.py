@@ -105,8 +105,6 @@ def _get_llm(cfg: dict):
     global _LLM, _CHAT
     if _LLM is not None:
         return _LLM, _CHAT
-    import inspect
-
     from vllm import LLM  # lazy: keeps `smoke` importable without vllm/GPU
 
     weights = (
@@ -123,11 +121,13 @@ def _get_llm(cfg: dict):
         "enforce_eager": bool(cfg.get("enforce_eager", True)),
         "limit_mm_per_prompt": {"image": 1},
     }
-    # vLLM 0.22+ accepts gdn_prefill_backend; the ROCm 0.19 build does not —
-    # pass it only if the running vLLM knows the flag.
-    if "gdn_prefill_backend" in inspect.signature(LLM.__init__).parameters:
-        kwargs["gdn_prefill_backend"] = cfg.get("gdn_prefill_backend", "triton")
-    _LLM = LLM(**kwargs)
+    # The upstream OvisOCR2 card pins gdn_prefill_backend="triton". vLLM 0.22+
+    # accepts it (forwarded to EngineArgs via **kwargs); the ROCm 0.19 build does
+    # not — fall back silently there.
+    try:
+        _LLM = LLM(gdn_prefill_backend=cfg.get("gdn_prefill_backend", "triton"), **kwargs)
+    except TypeError:
+        _LLM = LLM(**kwargs)
     _CHAT = _LLM.get_tokenizer().apply_chat_template(
         [
             {

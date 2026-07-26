@@ -10,12 +10,12 @@ order — in one pass. It set a new state of the art on
 [OmniDocBench v1.6](https://arxiv.org/abs/2607.13639) at **Overall 96.58**, the
 first end-to-end model to beat the pipeline methods that previously led the
 board. This repo runs it **on AMD ROCm via vLLM** (gfx1100 / Radeon PRO W7900),
-with full-set Overall **95.87** — the **#1 score in the zone** (3/4 metrics
+with full-set Overall **95.88** — the **#1 score in the zone** (3/4 metrics
 essentially perfect; the small CDM gap vs the paper's 96.58 is a verified
 vLLM-version artifact, see `docs/known-gaps.md`).
 
 - **Model:** `ovisocr2` v1.0 — Apache-2.0, no commercial restriction
-- **Backend:** vLLM 0.19.0 (ROCm), in-process (matches the upstream model card)
+- **Backend:** vLLM 0.22.1 (ROCm), in-process — the upstream card's pinned version
 - **Platform:** `linux-rocm` (community) · `windows-hip` (community-wanted)
 - **Zone:** [OmniDocBench-ROCm](https://github.com/AIwork4me/OmniDocBench-ROCm)
 
@@ -29,7 +29,7 @@ vLLM-version artifact, see `docs/known-gaps.md`).
 
 | Model | Params | Backend | Overall | Badge |
 |---|---|---|---|---|
-| **OvisOCR2 (this repo)** | **0.8B** | **vLLM/ROCm** | **95.87** | community |
+| **OvisOCR2 (this repo)** | **0.8B** | **vLLM/ROCm** | **95.88** | community |
 | PaddleOCR-VL-1.6 | 0.9B | llama.cpp/HIP | 95.77 | community |
 | MinerU2.5 | 1.2B | vLLM/ROCm | 95.56 | community |
 | HunyuanOCR | 1B | vLLM/ROCm | 93.64 | community |
@@ -44,7 +44,7 @@ committed measurement.
 
 Requires a qwen3_5-capable ROCm vLLM. The reference build is produced by
 [`rocm-vllm-installer`](https://github.com/AIwork4me/rocm-vllm-installer)
-(clones vLLM v0.19.0 + ROCm patches, builds for gfx110X-all, torch 2.10+rocm7.12).
+(build vLLM v0.22.1 + ROCm patches for gfx110X-all, torch 2.10+rocm7.12).
 
 ```bash
 # 1. ROCm vLLM venv (one-time; ~1-2 h build):
@@ -102,7 +102,7 @@ Eval config: [`eval/configs/omnidocbench_v16.yaml`](eval/configs/omnidocbench_v1
 
 - **Hardware:** AMD gfx1100 (Radeon PRO W7900, 48 GB) × 4; runs on one.
 - **ROCm driver:** 7.2 (torch 2.10.0+rocm7.12).
-- **Backend:** vLLM 0.19.0 ROCm (`vllm-build-gfx110x` venv), in-process.
+- **Backend:** vLLM 0.22.1 ROCm (`vllm-0221b` venv), in-process, `gdn_prefill_backend='triton'`.
 - **Recipe:** official OvisOCR2 card — greedy (temp=0), `max_tokens=16384`,
   pixels 448²–2880², `_clean_truncated_repeats`, visual-region tags filtered.
 - **Weights:** `ATH-MaaS/OvisOCR2` — see [`REPRO.yaml`](REPRO.yaml) for revision + sha256.
@@ -113,9 +113,13 @@ Eval config: [`eval/configs/omnidocbench_v16.yaml`](eval/configs/omnidocbench_v1
 
 - **`windows-hip`:** `community-wanted`. OvisOCR2's Qwen3-Next GDN architecture
   has no GGUF/HIP-SDK serving path yet; Windows is deferred.
-- **vLLM version:** built on vLLM 0.19.0 (the card pins 0.22.1). 0.19.0 lacks the
-  `gdn_prefill_backend` arg (the default GDN path is used); subset alignment
-  confirms outputs match the paper within tolerance.
+- **Formula CDM gap (model-inherent):** Overall 95.88 vs the paper's 96.58; the
+  0.70-pt gap is entirely formula CDM (95.41 vs 97.53). Systematic debugging
+  verified this is a **model-inherent** formula-segmentation difference on ~22 of
+  2352 formulas (median CDM 1.0) — **version-independent**: the repo runs the
+  card's pinned vLLM 0.22.1, and on the full 1651-page set 0.22.1 reproduces
+  0.19.0's CDM **exactly** (95.41 on both). Not closable via recipe or version;
+  see [`docs/known-gaps.md`](docs/known-gaps.md).
 - **Throughput:** eager mode + a ROCm paged-attention fallback give moderate
   throughput; the full set runs in ≈ 1 h on one GPU (≈ 30 min sharded across two).
   Non-eager/cudagraph tuning is future work.

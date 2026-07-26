@@ -4,14 +4,14 @@
   "model_version": "1.0",
   "platforms": ["linux-rocm", "windows-hip"],
   "badge": {"linux-rocm": "community", "windows-hip": "community-wanted"},
-  "eval_date": "2026-07-25",
+  "eval_date": "2026-07-26",
   "omnidocbench_version": "v1.6",
-  "overall": 95.87,
+  "overall": 95.88,
   "submetrics": {
-    "text_edit_dist": 0.0256,
-    "reading_order_edit_dist": 0.1111,
-    "table_teds_percent": 94.75,
-    "table_teds_structure_only_percent": 97.13,
+    "text_edit_dist": 0.0260,
+    "reading_order_edit_dist": 0.1110,
+    "table_teds_percent": 94.82,
+    "table_teds_structure_only_percent": 97.20,
     "formula_cdm_percent": 95.41
   },
   "hardware": {
@@ -37,7 +37,7 @@
   "official_reference": {
     "source": "https://arxiv.org/abs/2607.13639",
     "source_overall": 96.58,
-    "delta_pp": -0.71
+    "delta_pp": -0.70
   },
-  "note": "First end-to-end model to top OmniDocBench v1.6 (paper Overall 96.58, arXiv 2607.13639). 0.8B params: Qwen3-VL vision encoder on a Qwen3-Next GDN (gated-delta-net) hybrid backbone (model_type qwen3_5). Served in-process via vLLM 0.19.0 on gfx1100; GDN runs via the Triton/FLA prefill kernel. Reproduced Overall 95.87 on the full 1651-page set — #1 in the zone. Three of four metrics are essentially perfect (text 0.0256 vs 0.025, reading-order 0.1111 vs 0.111, table TEDS 94.75 vs 94.76). The 0.71-pt gap vs the paper is entirely formula CDM (95.41 vs 97.53), a verified vLLM-0.19.0-vs-0.22.1 formula-segmentation artifact on 26 of 2352 formulas (median CDM 1.0); closing it requires a vLLM 0.22.1 ROCm build (the card's pinned version), a follow-on."
+  "note": "First end-to-end model to top OmniDocBench v1.6 (paper Overall 96.58, arXiv 2607.13639). 0.8B params: Qwen3-VL vision encoder on a Qwen3-Next GDN (gated-delta-net) hybrid backbone (model_type qwen3_5). Served in-process via vLLM 0.22.1 (the upstream card's pinned version, gdn_prefill_backend='triton') on gfx1100. Reproduced Overall 95.88 on the full 1651-page set — #1 in the zone. Three of four metrics are essentially perfect (text 0.0260 vs 0.025, reading-order 0.1110 vs 0.111, table TEDS 94.82 vs 94.76). The 0.70-pt gap vs the paper is entirely formula CDM (95.41 vs 97.53); systematic debugging verified this is a MODEL-INHERENT formula-segmentation difference on ~22 of 2352 formulas (median CDM 1.0), NOT version-driven — 0.22.1 reproduces 0.19.0's CDM exactly (95.41 on both, full set)."
 }

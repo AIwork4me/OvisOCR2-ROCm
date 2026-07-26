@@ -37,9 +37,11 @@ OvisOCR2 is run **greedy** (`temperature=0.0`), so outputs are deterministic
 given identical (weights, vLLM version, image preprocessing). Known
 non-determinism surfaces the analysis explicitly avoids:
 
-- **vLLM 0.19.0 vs the card's 0.22.1** — the ROCm build is 0.19.0. Greedy outputs
-  match within tolerance (subset-confirmed), but are not byte-identical to a
-  0.22.1 run. Recorded honestly in `model_card.json.note` + `docs/known-gaps.md`.
+- **vLLM version** — the repo runs the upstream card's pinned **vLLM 0.22.1**
+  (`gdn_prefill_backend='triton'`). For transparency: an earlier run on vLLM
+  0.19.0 produced the same Overall within noise (the CDM gap is model-inherent,
+  version-independent — see `docs/known-gaps.md`), so 0.19.0 and 0.22.1 outputs
+  are interchangeable for this model.
 - **Batching order** — vLLM's continuous batching can in principle affect
   floating-point reduction order; greedy decoding is robust to this in practice.
 

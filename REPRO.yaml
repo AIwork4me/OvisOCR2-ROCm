@@ -6,7 +6,7 @@ schema_version: 1
 model_id: "ovisocr2"
 platform: "linux-rocm"
 backend: "vllm"
-overall: 95.87                # measured full-set Overall (1651 pages, incl. CDM)
+overall: 95.88                # measured full-set Overall on vLLM 0.22.1 (1651 pages, incl. CDM)
 tolerance: 0.5
 command: >-
   OVISOCR2_WEIGHTS=/root/models/OvisOCR2 HIP_VISIBLE_DEVICES=0
@@ -18,7 +18,7 @@ weights:
   sha256: "9270560288656ece5cb3a6989001afcf5af8d223bceed4a423c33a008861d009"
 environment:
   type: "venv"
-  image: "vllm-build-gfx110x (vLLM 0.19.0 ROCm, torch 2.10.0+rocm7.12, transformers 4.57.6)"
+  image: "vllm-0221b (vLLM 0.22.1 ROCm, torch 2.10.0+rocm7.12, transformers 4.57.6)"
   rocm: "7.2"
 hardware:
   gpu: "AMD gfx1100 (Radeon PRO W7900)"
