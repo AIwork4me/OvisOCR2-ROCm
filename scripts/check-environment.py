@@ -62,14 +62,17 @@ def main(argv=None) -> int:
         except (ImportError, RuntimeError, OSError) as e:
             rc = _fail(f"vLLM/GPU check: {e}")
 
-    wdir = Path(a.weights)
-    if wdir.exists():
-        if (wdir / "model.safetensors").exists():
-            _ok(f"weights at {wdir}")
-        else:
-            rc = _fail(f"weights missing model.safetensors at {wdir}")
-    elif not a.cpu_only:
-        print(f"  [INFO] no weights at {wdir} (override with --weights)")
+    # Weights are irrelevant on a CPU runner; only check in full mode, and tolerate
+    # unreadable paths (e.g. /root on a CI runner) rather than crashing.
+    if not a.cpu_only:
+        wdir = Path(a.weights)
+        try:
+            if wdir.exists() and (wdir / "model.safetensors").exists():
+                _ok(f"weights at {wdir}")
+            else:
+                rc = _fail(f"weights missing model.safetensors at {wdir}")
+        except OSError as e:
+            rc = _fail(f"cannot access weights at {wdir}: {e}")
     return rc
 
 
