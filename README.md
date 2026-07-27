@@ -2,26 +2,24 @@
 
 [![CI](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml/badge.svg)](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml)
 
-**OvisOCR2 on AMD Radeon — the first end-to-end model to top OmniDocBench v1.6,
-now running natively on ROCm.**
+**OvisOCR2 on AMD Radeon — an end-to-end document parser running natively on ROCm.**
 
 [OvisOCR2](https://huggingface.co/ATH-MaaS/OvisOCR2) (ATH-MaaS / Alibaba,
 Apache-2.0, 0.8B params) is a compact end-to-end page parser: give it a document
 page image and it emits structured Markdown — text, tables, formulas, reading
-order — in one pass. It set a new state of the art on
-[OmniDocBench v1.6](https://arxiv.org/abs/2607.13639) at **Overall 96.58**, the
-first end-to-end model to beat the pipeline methods that previously led the
-board. This repo runs it **on AMD ROCm via vLLM** (gfx1100 / Radeon PRO W7900),
-with full-set Overall **95.88** — the **#1 score in the zone** (3/4 metrics
-essentially perfect; the small CDM gap vs the paper's 96.58 is a **model-inherent,
-version-independent** formula-segmentation difference — a 0.19.0-vs-0.22.1 A/B
-reproduces CDM 95.41 on both; the earlier 0.19.0 run scored 95.87. See
-`docs/known-gaps.md`).
+order — in one pass. This repo runs it **on AMD ROCm via vLLM** (gfx1100 / Radeon
+PRO W7900) and publishes its OmniDocBench v1.6 measurement under the
+[OmniDocBench-ROCm](https://github.com/AIwork4me/OmniDocBench-ROCm) v2 standard
+(`rocmdoc.yaml` + `model_card_v2.json` + a standard CLI).
+
+Measured results are **generated** from [`model_card_v2.json`](model_card_v2.json)
+into the block below — no score in this README is hand-typed. Cross-model
+comparison lives in the central hub, not in this sub-repo.
 
 - **Model:** `ovisocr2` v1.0 — Apache-2.0, no commercial restriction
-- **Backend:** vLLM 0.22.1 (ROCm), in-process — the upstream card's pinned version
-- **Platform:** `linux-rocm` (community) · `windows-hip` (community-wanted)
-- **Zone:** [OmniDocBench-ROCm](https://github.com/AIwork4me/OmniDocBench-ROCm)
+- **Backend:** vLLM (ROCm), in-process
+- **Platform:** `linux-rocm` (supported) · `windows-hip` (unsupported — see Known Gaps)
+- **Standard CLI:** `ovisocr2-rocm {version,capabilities,doctor,parse} --json`
 
 > **Architecture note.** Despite the "Ovis" name, `config.json` declares
 > `model_type: qwen3_5` / `Qwen3_5ForConditionalGeneration` — a Qwen3-VL vision
@@ -29,20 +27,17 @@ reproduces CDM 95.41 on both; the earlier 0.19.0 run scored 95.87. See
 > routes it to its native `qwen3_5` implementation; the GDN linear-attention
 > layers run via the Triton/FLA prefill kernel on ROCm.
 
-## Comparison — OmniDocBench v1.6 (linux-rocm)
+## Results — OmniDocBench v1.6 (linux-rocm)
 
-| Model | Params | Backend | Overall | Badge |
-|---|---|---|---|---|
-| **OvisOCR2 (this repo)** | **0.8B** | **vLLM/ROCm** | **95.88** | community |
-| PaddleOCR-VL-1.6 | 0.9B | llama.cpp/HIP | 95.77 | community |
-| MinerU2.5 | 1.2B | vLLM/ROCm | 95.56 | community |
-| HunyuanOCR | 1B | vLLM/ROCm | 93.64 | community |
+<!-- BEGIN GENERATED RESULTS -->
+<!-- Source: model_card_v2.json — do not edit by hand; run scripts/generate_readme_results.py -->
 
-OvisOCR2 is the **smallest model** in the zone and the **highest-scoring** — and
-the first *end-to-end* parser to lead the board. Paper reference: Overall 96.58,
-text edit-dist 0.025, formula CDM 97.5, table TEDS 94.8, reading-order 0.111
-(arXiv 2607.13639, Table 2). See [`model_card.json`](model_card.json) for the
-committed measurement.
+| result_id | platform | backend | precision | overall | text_edit_dist | reading_order | table_teds % | formula_cdm % | assurance | status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91 | linux-rocm | vllm | bf16 | 95.88 | 0.0260 | 0.1110 | 94.82 | 95.41 | submitted | valid |
+
+_Last generated from `model_card_v2.json`. Cross-model comparison lives in the [central hub](https://github.com/AIwork4me/OmniDocBench-ROCm), not in this repo._
+<!-- END GENERATED RESULTS -->
 
 ## Install
 
@@ -60,8 +55,8 @@ cd rocm-vllm-installer && VENV=/root/venvs/vllm-0221b VLLM_VERSION=v0.22.1 bash 
   print('Qwen3_5ForConditionalGeneration' in m.get_supported_archs())"   # -> True
 
 # 2. The engine (omnidocbench-rocm, a sibling GitHub project — not on PyPI; install
-#    the pinned tag into the venv) + this repo:
-/root/venvs/vllm-0221b/bin/pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/omnidocbench-rocm.git@v0.3.2"
+#    the pinned commit into the venv) + this repo:
+/root/venvs/vllm-0221b/bin/pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/omnidocbench-rocm.git@c1267cb1104e87bf9f8130875ce2f7da329ddcb4"
 pip install -e ".[dev]"
 
 # 3. Weights (HF or ModelScope — identical):
@@ -92,6 +87,12 @@ python adapter/run_adapter.py --img-dir /tmp/in --out-dir /tmp/out \
 cat /tmp/out/*.md
 ```
 
+Or via the standard CLI (pure-JSON contract):
+
+```bash
+ovisocr2-rocm parse --img-dir /tmp/in --out-dir /tmp/out --platform linux-rocm --backend vllm --json
+```
+
 ## Evaluation
 
 Full OmniDocBench v1.6 (1651 pages), Edit_dist + TEDS + CDM:
@@ -118,22 +119,22 @@ Eval config: [`eval/configs/omnidocbench_v16.yaml`](eval/configs/omnidocbench_v1
 
 ## Known Gaps
 
-- **`windows-hip`:** `community-wanted`. OvisOCR2's Qwen3-Next GDN architecture
-  has no GGUF/HIP-SDK serving path yet; Windows is deferred.
-- **Formula CDM gap (model-inherent):** Overall 95.88 vs the paper's 96.58; the
-  0.70-pt gap is entirely formula CDM (95.41 vs 97.53). Systematic debugging
-  verified this is a **model-inherent** formula-segmentation difference on ~22 of
-  2352 formulas (median CDM 1.0) — **version-independent**: the repo runs the
-  card's pinned vLLM 0.22.1, and on the full 1651-page set 0.22.1 reproduces
-  0.19.0's CDM **exactly** (95.41 on both). Not closable via recipe or version;
-  see [`docs/known-gaps.md`](docs/known-gaps.md).
+- **`windows-hip`:** `unsupported` / community-wanted. OvisOCR2's Qwen3-Next GDN
+  architecture has no GGUF/HIP-SDK serving path yet; Windows is **not evaluated**
+  and carries no result (the 0-page smoke fixture was moved to `tests/fixtures/`).
+- **Formula CDM gap (model-inherent):** the gap to the upstream paper's Overall is
+  concentrated in formula CDM and is **model-inherent + version-independent** — a
+  0.19.0-vs-0.22.1 A/B reproduces the same CDM on both. Not closable via recipe or
+  version; see [`docs/known-gaps.md`](docs/known-gaps.md). The headline numbers live
+  only in the generated results block above (from `model_card_v2.json`).
 - **Throughput:** eager mode + a ROCm paged-attention fallback give moderate
   throughput; the full set is **observed** at ≈ 1 h on one W7900 (≈ 30 min sharded
   across two) — a manual measurement, not CI-derived; per-page latency is not
   recorded in the published bundle. Non-eager/cudagraph tuning is future work.
-- **`verified` tier:** not yet — requires a maintainer Docker reproduction (the
-  dev env has no Docker). This is a `community` (self-attested, CI-verified)
-  entry; see [`docs/known-gaps.md`](docs/known-gaps.md).
+- **`verified` tier / dtype:** not yet — the published result is `assurance:
+  submitted` (self-attested, CI-verified structure + conformance). Promotion to
+  higher assurance requires a maintainer Docker reproduction and a GPU-verified
+  dtype (not claimed here); see [`docs/known-gaps.md`](docs/known-gaps.md).
 
 ## License
 

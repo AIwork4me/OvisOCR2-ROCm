@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ovisocr2-rocm"
-version = "1.0"
-description = "OvisOCR2 (0.8B) end-to-end document parser on AMD ROCm via vLLM — an omnidocbench-rocm adapter."
+version = "2.0.0"
+description = "OvisOCR2 (0.8B) end-to-end document parser on AMD ROCm via vLLM — a v2-conformant omnidocbench-rocm adapter."
 readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.11"
@@ -25,15 +25,21 @@ dependencies = ["omnidocbench-rocm>=0.2.0", "Pillow>=10"]
 [project.urls]
 Repository = "https://github.com/AIwork4me/OvisOCR2-ROCm"
 
+[project.scripts]
+# Standard CLI (ADR-0011): version / capabilities / doctor / parse --json
+ovisocr2-rocm = "ovisocr2_rocm.cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6", "build>=1.2", "pyyaml>=6"]
+vllm = ["vllm>=0.22.1"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["adapter"]
+packages = ["src/ovisocr2_rocm"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+pythonpath = ["src", "."]
 
 [tool.ruff]
 line-length = 120

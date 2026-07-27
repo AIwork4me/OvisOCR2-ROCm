@@ -2,27 +2,30 @@
 
 [![CI](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml/badge.svg)](https://github.com/AIwork4me/OvisOCR2-ROCm/actions/workflows/ci.yml)
 
-**OvisOCR2 跑在 AMD Radeon 上 —— 首个登顶 OmniDocBench v1.6 的端到端模型，现已原生运行于 ROCm。**
+**OvisOCR2 跑在 AMD Radeon 上 —— 一个原生运行于 ROCm 的端到端文档解析模型。**
 
-[OvisOCR2](https://huggingface.co/ATH-MaaS/OvisOCR2)（ATH-MaaS / 阿里，Apache-2.0，0.8B 参数）是一个紧凑的端到端页面解析模型：输入一页文档图像，它一次性输出结构化 Markdown——文本、表格、公式、阅读顺序。它在 [OmniDocBench v1.6](https://arxiv.org/abs/2607.13639) 上取得 **综合得分 96.58** 的新纪录，是首个超越此前由流水线方法主导的排行榜的端到端模型。本仓库将其运行于 **AMD ROCm 上的 vLLM**（gfx1100 / Radeon PRO W7900），全量复现综合得分 **95.88** ——**专区内排名第一**（4 项指标中 3 项基本完美；公式 CDM 与论文 96.58 的小差距是已查明的**模型固有**分段差异，与 vLLM 版本无关，详见 `docs/known-gaps.md`）。
+[OvisOCR2](https://huggingface.co/ATH-MaaS/OvisOCR2)（ATH-MaaS / 阿里，Apache-2.0，0.8B 参数）是一个紧凑的端到端页面解析模型：输入一页文档图像，它一次性输出结构化 Markdown——文本、表格、公式、阅读顺序。本仓库将其运行于 **AMD ROCm 上的 vLLM**（gfx1100 / Radeon PRO W7900），并按 [OmniDocBench-ROCm](https://github.com/AIwork4me/OmniDocBench-ROCm) v2 标准（`rocmdoc.yaml` + `model_card_v2.json` + 标准 CLI）发布其 OmniDocBench v1.6 实测。
+
+实测结果由 [`model_card_v2.json`](model_card_v2.json) **自动生成**到下方区块——本 README 中没有任何手写分数。跨模型对比见中央 hub，不在本子仓。
 
 - **模型：** `ovisocr2` v1.0 —— Apache-2.0，无商用限制
-- **后端：** vLLM 0.22.1（ROCm），进程内加载 —— 上游模型卡指定的版本
-- **平台：** `linux-rocm`（community）· `windows-hip`（community-wanted）
-- **所属专区：** [OmniDocBench-ROCm](https://github.com/AIwork4me/OmniDocBench-ROCm)
+- **后端：** vLLM（ROCm），进程内加载
+- **平台：** `linux-rocm`（supported）· `windows-hip`（unsupported —— 见已知限制）
+- **标准 CLI：** `ovisocr2-rocm {version,capabilities,doctor,parse} --json`
 
 > **架构说明。** 虽名为 "Ovis"，但 `config.json` 声明 `model_type: qwen3_5` / `Qwen3_5ForConditionalGeneration`——即 Qwen3-VL 视觉编码器 + **Qwen3-Next GDN（门控增量网络）混合**文本骨干。vLLM 路由到其原生 `qwen3_5` 实现；GDN 线性注意力层在 ROCm 上经 Triton/FLA 预填充内核运行。
 
-## 对比 —— OmniDocBench v1.6（linux-rocm）
+## 结果 —— OmniDocBench v1.6（linux-rocm）
 
-| 模型 | 参数量 | 后端 | 综合得分 | 徽章 |
-|---|---|---|---|---|
-| **OvisOCR2（本仓库）** | **0.8B** | **vLLM/ROCm** | **95.88** | community |
-| PaddleOCR-VL-1.6 | 0.9B | llama.cpp/HIP | 95.77 | community |
-| MinerU2.5 | 1.2B | vLLM/ROCm | 95.56 | community |
-| HunyuanOCR | 1B | vLLM/ROCm | 93.64 | community |
+<!-- BEGIN GENERATED RESULTS -->
+<!-- Source: model_card_v2.json — do not edit by hand; run scripts/generate_readme_results.py -->
 
-OvisOCR2 是本专区**参数量最小**、**得分最高**的模型，也是首个领跑榜单的*端到端*解析器。论文参考：综合 96.58，文本编辑距离 0.025，公式 CDM 97.5，表格 TEDS 94.8，阅读顺序 0.111（arXiv 2607.13639，表 2）。已提交的实测值见 [`model_card.json`](model_card.json)。
+| result_id | 平台 | 后端 | 精度 | Overall | 文本编辑距 | 阅读顺序 | 表格 TEDS % | 公式 CDM % | assurance | 状态 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91 | linux-rocm | vllm | bf16 | 95.88 | 0.0260 | 0.1110 | 94.82 | 95.41 | submitted | valid |
+
+_由 `model_card_v2.json` 自动生成，请勿手改。跨模型对比见 [中央 hub](https://github.com/AIwork4me/OmniDocBench-ROCm)，不在本子仓。_
+<!-- END GENERATED RESULTS -->
 
 ## 安装（Install）
 
@@ -40,11 +43,11 @@ cd rocm-vllm-installer && VENV=/root/venvs/vllm-0221b VLLM_VERSION=v0.22.1 bash 
   print('Qwen3_5ForConditionalGeneration' in m.get_supported_archs())"   # -> True
 
 # 2. 引擎（omnidocbench-rocm，GitHub 同源项目，不在 PyPI；装入上述 venv）+ 本仓库：
-/root/venvs/vllm-0221b/bin/pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/omnidocbench-rocm.git@v0.3.2"
+/root/venvs/vllm-0221b/bin/pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/omnidocbench-rocm.git@c1267cb1104e87bf9f8130875ce2f7da329ddcb4"
 pip install -e ".[dev]"        # 本仓库（用于测试 / conformance）
 
 # 3. 权重（HF 或 ModelScope，二者一致；国内推荐 ModelScope）：
-python -c "from modelscope import snapshot_download; \
+python -c "from huggingface_hub import snapshot_download; \
   snapshot_download('ATH-MaaS/OvisOCR2', local_dir='/root/models/OvisOCR2')"
 export OVISOCR2_WEIGHTS=/root/models/OvisOCR2
 ```
@@ -67,6 +70,12 @@ mkdir -p /tmp/in /tmp/out && cp examples/demo.png /tmp/in/
 python adapter/run_adapter.py --img-dir /tmp/in --out-dir /tmp/out \
   --platform linux-rocm --backend vllm
 cat /tmp/out/*.md
+```
+
+或通过标准 CLI（纯 JSON 契约）：
+
+```bash
+ovisocr2-rocm parse --img-dir /tmp/in --out-dir /tmp/out --platform linux-rocm --backend vllm --json
 ```
 
 ## 评测（Evaluation）
@@ -92,10 +101,10 @@ make eval-linux        # = omnidocbench-rocm run --stage all ...（推理 + 打�
 
 ## 已知限制（Known Gaps）
 
-- **`windows-hip`：** `community-wanted`。OvisOCR2 的 Qwen3-Next GDN 架构暂无 GGUF/HIP-SDK 服务路径，Windows 暂缓。
-- **公式 CDM 差距（模型固有）：** 综合 95.88 vs 论文 96.58；0.70 分差距全在公式 CDM（95.41 vs 97.53）。系统化调试验证这是**模型固有**的公式分段差异（约 22/2352 个公式，中位 CDM 1.0）——**与版本无关**（本仓库运行模型卡指定的 vLLM 0.22.1；全量 1651 页上 0.22.1 与 0.19.0 的 CDM 完全一致：均为 95.41；0.19.0 综合 95.87、0.22.1 综合 95.88）。无法通过 recipe 或版本修复；详见 [`docs/known-gaps.md`](docs/known-gaps.md)。
+- **`windows-hip`：** `unsupported` / community-wanted。OvisOCR2 的 Qwen3-Next GDN 架构暂无 GGUF/HIP-SDK 服务路径；Windows **未评测**、不带结果（0 页 smoke 夹具已移至 `tests/fixtures/`）。
+- **公式 CDM 差距（模型固有）：** 与上游论文 Overall 的差距集中在公式 CDM，且为**模型固有 + 与版本无关**（0.19.0 与 0.22.1 的 A/B 复现出相同的 CDM）。无法通过 recipe 或版本修复；详见 [`docs/known-gaps.md`](docs/known-gaps.md)。头条数值仅存在于上方生成区块（来自 `model_card_v2.json`）。
 - **吞吐：** eager 模式 + ROCm 分页注意力回退，吞吐中等；单卡全量**实测**约 1 小时（双卡分片约 30 分钟）——人工观测值，非 CI 测得；已发布产物中不记录逐页延迟。非 eager/cudagraph 调优为后续工作。
-- **`verified` 等级：** 暂无 —— 需维护者 Docker 复现（开发环境无 Docker）。本条目为 `community`（自证、CI 校验）；见 [`docs/known-gaps.md`](docs/known-gaps.md)。
+- **`verified` 等级 / dtype：** 暂无 —— 已发布结果为 `assurance: submitted`（自证、CI 校验结构与 conformance）。提升至更高 assurance 需维护者 Docker 复现与 GPU 实测 dtype（此处不主张）；见 [`docs/known-gaps.md`](docs/known-gaps.md)。
 
 ## 许可证
 

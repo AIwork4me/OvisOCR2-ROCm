@@ -1,0 +1,42 @@
+# rocmdoc.yaml — OvisOCR2-ROCm capability manifest (ADR-0009).
+# This DECLARES capability (platforms/backends/licenses); it is NOT a benchmark
+# result. Results live in model_card_v2.json. Validate + align:
+#   omnidocbench-rocm manifest rocmdoc.yaml --card model_card_v2.json
+schema_version: 1
+project:
+  name: OvisOCR2-ROCm
+  repo: AIwork4me/OvisOCR2-ROCm
+  description: OvisOCR2 (0.8B) end-to-end document parser on AMD ROCm via vLLM.
+upstream:
+  name: OvisOCR2
+  repo: ATH-MaaS/OvisOCR2
+  revision: ""   # weights revision pinned at eval time (ADR-0003); recorded in provenance
+model:
+  id: ovisocr2
+  version: "1.0"
+  task: document-parsing
+  arch: VLM           # Qwen3-VL vision encoder on a Qwen3-Next GDN hybrid backbone (model_type qwen3_5)
+  params_b: 0.8
+licenses:
+  code:
+    category: open-source-ai
+    spdx: Apache-2.0
+    commercial_use: permitted
+  weights:
+    category: open-weights
+    spdx: Apache-2.0
+    commercial_use: permitted
+interfaces:
+  - adapter-script
+  - standard-cli
+implementations:
+  - platform: linux-rocm
+    backend: vllm
+    precision: "bf16"   # VERIFIED: checkpoint 473/473 tensors BF16 + config.json dtype=bfloat16; no --dtype override (vLLM 'auto')
+    interface: standard-cli
+    status: supported
+  - platform: windows-hip
+    backend: vllm
+    precision: ""
+    interface: adapter-script
+    status: unsupported   # Qwen3-Next GDN has no HIP-SDK serving path; community-wanted, NOT evaluated

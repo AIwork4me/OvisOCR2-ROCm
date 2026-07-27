@@ -1,11 +1,15 @@
-"""merge-shards validation tests (P0-4): coverage, missing, conflict, stable order."""
+"""merge-shards validation tests (P0-4): coverage, missing, conflict, stable order.
+
+Runs the single pipeline for two shards, then exercises ``scripts/merge-shards.py``
+as a subprocess (the merge lives in ``ovisocr2_rocm.sharding``).
+"""
 import subprocess
 import sys
 from pathlib import Path
 
 from PIL import Image
 
-import adapter.run_adapter as R
+from ovisocr2_rocm.pipeline import run_pipeline
 
 REPO = Path(__file__).resolve().parents[1]
 MERGE = REPO / "scripts" / "merge-shards.py"
@@ -23,9 +27,9 @@ def _run_two_shards(tmp, fake_vllm, names):
     fake_vllm()
     d = _imgs(tmp, names)
     for idx in (0, 1):
-        R.run_adapter(d, tmp / "preds", platform="linux-rocm",
-                      config={"backend": "vllm", "platform": "linux-rocm", "weights_dir": "f",
-                              "num_shards": 2, "shard_index": idx})
+        run_pipeline(d, tmp / "preds", platform="linux-rocm",
+                     cli={"backend": "vllm", "platform": "linux-rocm", "weights_dir": "f",
+                          "num_shards": 2, "shard_index": idx})
     return d
 
 
