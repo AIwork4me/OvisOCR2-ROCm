@@ -22,7 +22,7 @@
 
 | result_id | 平台 | 后端 | 精度 | Overall | 文本编辑距 | 阅读顺序 | 表格 TEDS % | 公式 CDM % | assurance | 状态 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| ovisocr2__linux-rocm__vllm__default__v1-6__d7f4509d3791 | linux-rocm | vllm | — | 95.88 | 0.0260 | 0.1110 | 94.82 | 95.41 | submitted | valid |
+| ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91 | linux-rocm | vllm | bf16 | 95.88 | 0.0260 | 0.1110 | 94.82 | 95.41 | submitted | valid |
 
 _由 `model_card_v2.json` 自动生成，请勿手改。跨模型对比见 [中央 hub](https://github.com/AIwork4me/OmniDocBench-ROCm)，不在本子仓。_
 <!-- END GENERATED RESULTS -->

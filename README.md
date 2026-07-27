@@ -34,7 +34,7 @@ comparison lives in the central hub, not in this sub-repo.
 
 | result_id | platform | backend | precision | overall | text_edit_dist | reading_order | table_teds % | formula_cdm % | assurance | status |
 |---|---|---|---|---|---|---|---|---|---|---|
-| ovisocr2__linux-rocm__vllm__default__v1-6__d7f4509d3791 | linux-rocm | vllm | — | 95.88 | 0.0260 | 0.1110 | 94.82 | 95.41 | submitted | valid |
+| ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91 | linux-rocm | vllm | bf16 | 95.88 | 0.0260 | 0.1110 | 94.82 | 95.41 | submitted | valid |
 
 _Last generated from `model_card_v2.json`. Cross-model comparison lives in the [central hub](https://github.com/AIwork4me/OmniDocBench-ROCm), not in this repo._
 <!-- END GENERATED RESULTS -->

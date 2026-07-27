@@ -11,10 +11,10 @@
     "spdx": "Apache-2.0",
     "commercial_use": "permitted"
   },
-  "primary_result_id": "ovisocr2__linux-rocm__vllm__default__v1-6__d7f4509d3791",
+  "primary_result_id": "ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91",
   "results": [
     {
-      "result_id": "ovisocr2__linux-rocm__vllm__default__v1-6__d7f4509d3791",
+      "result_id": "ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91",
       "status": "valid",
       "assurance": "submitted",
       "primary": true,
@@ -24,10 +24,10 @@
       },
       "implementation": {
         "backend": "vllm",
-        "precision": "",
+        "precision": "bf16",
         "serving_stack": "vllm-rocm (in-process, embedded-python)",
         "engine_version": "0.3.2",
-        "note": "precision/dtype UNVERIFIED from the stored evidence — not claimed as bf16; detected per-run by the runtime"
+        "note": "precision=bf16 VERIFIED from the pinned checkpoint (model.safetensors: 473/473 tensors BF16; config.json dtype=bfloat16) of weights ATH-MaaS/OvisOCR2 @ revision 65c619d (REPRO.yaml sha256 927056…); no --dtype override in the run command -> vLLM 'auto' loads BF16. The runtime also re-detects dtype per-run via runtime.detect_dtype()."
       },
       "coverage": {
         "platform": "linux-rocm",

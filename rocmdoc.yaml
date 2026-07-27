@@ -32,7 +32,7 @@ interfaces:
 implementations:
   - platform: linux-rocm
     backend: vllm
-    precision: ""      # dtype UNVERIFIED from evidence — do not claim bf16; detected at runtime, recorded per-run
+    precision: "bf16"   # VERIFIED: checkpoint 473/473 tensors BF16 + config.json dtype=bfloat16; no --dtype override (vLLM 'auto')
     interface: standard-cli
     status: supported
   - platform: windows-hip
