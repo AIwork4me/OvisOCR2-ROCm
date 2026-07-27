@@ -5,6 +5,11 @@ on: [push, pull_request]
 permissions:
   contents: read
 
+# Central standard is pinned by .rocmdoc/spec-lock.json (one source of truth) and
+# read into the install below — CI never follows central `main`. All third-party
+# Actions are pinned to a commit SHA (commented with their tag) per the supply-chain
+# policy; bump deliberately by updating both the SHA and the comment.
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,28 +19,49 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-      # omnidocbench-rocm is a sibling GitHub project (not on PyPI); install the
-      # exact pinned tag that produced the published results before this repo.
-      - run: pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/omnidocbench-rocm.git@v0.3.2"
+
+      # Central engine — pinned to the exact commit in .rocmdoc/spec-lock.json
+      # (NOT main). Single source of truth: edit spec-lock.json, not this line.
+      - name: Resolve central pin
+        id: central
+        run: echo "commit=$(python -c 'import json;print(json.load(open(".rocmdoc/spec-lock.json"))["commit"])')" >> "$GITHUB_OUTPUT"
+      - name: Install pinned central engine
+        run: pip install "omnidocbench-rocm @ git+https://github.com/AIwork4me/OmniDocBench-ROCm.git@${{ steps.central.outputs.commit }}"
+
       - run: pip install -e ".[dev]"
+
+      # Lint + unit tests (fake runtime / smoke backend — NO GPU needed)
       - run: ruff check .
       - run: pytest -q
+
+      # Build the wheel (src layout + console script)
       - run: python -m build
+
+      # v2 gate: spec-lock format, schema validity (v1 card + v2 card + manifest),
+      # result_id uniqueness / assurance / result-alignment, behavioral conformance
+      # profiles (base + runtime-core + benchmark smoke), README drift. No GPU.
+      - run: python scripts/check_v2_conformance.py
+
+      # Official engine structural conformance (belt-and-suspenders with the above)
       - run: omnidocbench-rocm conformance .
+
       - run: python scripts/check-environment.py --cpu-only
-      - name: Smoke demo
+
+      - name: Smoke demo (smoke backend, no GPU)
         run: bash examples/run_demo.sh
+
       - name: README path sanity
         run: |
           python - <<'PY'
           from pathlib import Path
           for f in ["examples/demo.png", "adapter/run_adapter.py",
-                    "eval/configs/omnidocbench_v16.yaml", "REPRO.yaml"]:
+                    "eval/configs/omnidocbench_v16.yaml", "REPRO.yaml", "rocmdoc.yaml",
+                    "model_card_v2.json", ".rocmdoc/spec-lock.json"]:
               assert (Path(".") / f).exists(), f"README references missing path: {f}"
           print("README paths OK")
           PY

@@ -1,0 +1,79 @@
+{
+  "schema_version": 2,
+  "model_id": "ovisocr2",
+  "model_version": "1.0",
+  "upstream": {
+    "name": "OvisOCR2",
+    "repo": "ATH-MaaS/OvisOCR2"
+  },
+  "license": {
+    "category": "open-weights",
+    "spdx": "Apache-2.0",
+    "commercial_use": "permitted"
+  },
+  "primary_result_id": "ovisocr2__linux-rocm__vllm__default__v1-6__d7f4509d3791",
+  "results": [
+    {
+      "result_id": "ovisocr2__linux-rocm__vllm__default__v1-6__d7f4509d3791",
+      "status": "valid",
+      "assurance": "submitted",
+      "primary": true,
+      "benchmark": {
+        "name": "OmniDocBench",
+        "version": "v1.6"
+      },
+      "implementation": {
+        "backend": "vllm",
+        "precision": "",
+        "serving_stack": "vllm-rocm (in-process, embedded-python)",
+        "engine_version": "0.3.2",
+        "note": "precision/dtype UNVERIFIED from the stored evidence — not claimed as bf16; detected per-run by the runtime"
+      },
+      "coverage": {
+        "platform": "linux-rocm",
+        "full_set": true,
+        "page_count": 1651
+      },
+      "metrics": {
+        "overall": 95.88,
+        "text_edit_dist": 0.025979036044220756,
+        "reading_order_edit_dist": 0.1109989435858049,
+        "table_teds_percent": 94.81783132241132,
+        "table_teds_structure_only_percent": 97.19767015398504,
+        "formula_cdm_percent": 95.40686001313709
+      },
+      "hardware": {
+        "gpu": "AMD gfx1100 (Radeon PRO W7900)",
+        "vram_mb": 49152,
+        "rocm_driver": "7.2"
+      },
+      "software": {
+        "rocm": "7.2"
+      },
+      "artifacts": {
+        "metric_result": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_metric_result.json",
+        "metric_result_sha256": "sha256:19216ce98340b785f62431638334de84c91d61eebb5c4ef8ac3b1263c2c72c79",
+        "run_summary": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_run_summary.json",
+        "run_summary_sha256": "sha256:095fcda90f6e349efa1a8a274381c9f151e51d0577d42f3216c753028f3ce0a3",
+        "provenance": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_provenance.json",
+        "provenance_sha256": "sha256:b2d6b8eca1cbd309992767a3f273a445b92ec7c30fbf22d8b01b8b051255734d",
+        "run_stats": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_run_stats.json",
+        "run_stats_sha256": "sha256:4e643c6715956a5225cfdfdce7812b4cc4b4295e8edfba3308cafa388b9d5bdc",
+        "prediction_manifest": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_prediction_manifest.json",
+        "prediction_manifest_sha256": "sha256:3cd8d129ba6b85ba2e3bb0022bd84df67fb115cbe324cd0f02e73be556507a95",
+        "dataset_identity": "results/omnidocbench/v16/linux-rocm/ovisocr2_v16_quick_match_cdm_dataset_identity.json",
+        "dataset_identity_sha256": "sha256:ea8bb7f0f25171b676960a53f43402a0fb2efaeafd7d476db70222e3b6bb9577"
+      },
+      "provenance": {
+        "created_at_utc": "2026-07-26T06:21:51Z",
+        "git_commit": "fdef86674d1519301ff9c8a29133750f173180a9",
+        "engine_version": "0.3.2",
+        "dataset_revision": "2b161d0"
+      },
+      "note": "Migrated from model_card.json v1 (history preserved there). Overall 95.88 preserved unchanged; submetrics from run_summary. efficiency.latency was 0.0 in the raw run_summary (not honestly measured) and is intentionally OMITTED here rather than carried as fake data."
+    }
+  ],
+  "platforms": [
+    "linux-rocm"
+  ]
+}

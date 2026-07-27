@@ -89,12 +89,10 @@ def fake_vllm(monkeypatch):
         mod = types.ModuleType("vllm")
         mod.LLM = _make_llm
         mod.SamplingParams = _FakeSamplingParams
+        mod.__version__ = "0.0.0-fake"  # for the gdn-support error path / env record
         monkeypatch.setitem(sys.modules, "vllm", mod)
-        # reset adapter memoization so each test builds a fresh FakeLLM
-        import adapter.run_adapter as R
-
-        R._LLM = None
-        R._CHAT = None
+        # The VLLMBackend is constructed fresh per run_pipeline call (no module
+        # memoization), so there is nothing to reset between tests.
         return mod
 
     return install
