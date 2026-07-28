@@ -47,7 +47,7 @@ def _cmd_capabilities(args) -> int:
 
 
 def _cmd_doctor(args) -> int:
-    return _emit(_doctor.check())
+    return _emit(_doctor.check(level=getattr(args, "level", "structural")))
 
 
 def _cmd_parse(args) -> int:
@@ -97,7 +97,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("capabilities").add_argument("--json", dest="json", action="store_true")
 
-    sub.add_parser("doctor").add_argument("--json", dest="json", action="store_true")
+    dr = sub.add_parser("doctor")
+    dr.add_argument("--json", dest="json", action="store_true")
+    dr.add_argument("--level", default="structural", choices=("structural", "runtime", "all"),
+                    help="structural (default, no GPU) | runtime (probe ROCm/VLM stack) | all")
 
     pr = sub.add_parser("parse")
     pr.add_argument("--img-dir", required=True)

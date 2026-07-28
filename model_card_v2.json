@@ -12,12 +12,46 @@
     "commercial_use": "permitted"
   },
   "primary_result_id": "ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91",
+  "primary_selection": {
+    "model_id": "ovisocr2",
+    "comparison_track_id": "omnidocbench-v1-6-full-default-f23c37da",
+    "result_id": "ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91",
+    "selected_by": "AIwork4me",
+    "selected_at": "2026-07-28T00:00:00Z",
+    "rationale": "Single embedded vLLM runtime; the only valid full-set linux-rocm result (explicit choice, not highest-score).",
+    "policy_version": "round-2-2026-07"
+  },
+  "comparison_tracks": [
+    {
+      "track_id": "omnidocbench-v1-6-full-default-f23c37da",
+      "version": "1",
+      "benchmark": {"id": "omnidocbench", "version": "v1.6"},
+      "dataset": {"subset": "full", "page_set_hash": "unknown"},
+      "scorer": {"protocol": "default", "revision": "2b161d0"},
+      "eligibility": {"excluded_statuses": ["superseded", "retracted", "invalid"]}
+    }
+  ],
+  "licenses": {
+    "code": {"category": "open-source-software", "spdx": "Apache-2.0"},
+    "model": {"category": "open-weights", "weights_license": "Apache-2.0", "assessment_basis": "OvisOCR2 weights released under Apache-2.0 by upstream ATH-MaaS/OvisOCR2", "commercial_use": "permitted", "attribution_required": true}
+  },
   "results": [
     {
       "result_id": "ovisocr2__linux-rocm__vllm__bf16__v1-6__7d3d44f37a91",
       "status": "valid",
       "assurance": "submitted",
+      "producer_assurance": "submitted",
       "primary": true,
+      "topology": {"type": "embedded-python"},
+      "accelerator_family": "rocm",
+      "run_spec": {
+        "model": {"model_id": "ovisocr2", "model_revision": "unknown", "weights_sha256": "unknown"},
+        "implementation": {"implementation_id": "ovisocr2-vllm-embedded", "platform": "linux-rocm", "backend": "vllm", "backend_version": "0.22.1", "precision": "bf16", "quantization": "none", "architecture": "vlm", "topology": "embedded-python"},
+        "benchmark": {"benchmark_id": "omnidocbench", "benchmark_version": "v1.6", "dataset_revision": "2b161d0", "dataset_subset": "full", "scorer_revision": "2b161d0", "scoring_protocol": "default", "page_set_hash": "unknown"},
+        "inference": {"prompt_hash": "unknown", "preprocessing_config_hash": "unknown", "postprocessing_config_hash": "unknown", "runtime_config_hash": "unknown"}
+      },
+      "run_spec_hash": "sha256:a3454bf678dd01edda666fafe6194f24bdb50ec061f02c374c2f89a9845bf42d",
+      "comparison_track_id": "omnidocbench-v1-6-full-default-f23c37da",
       "benchmark": {
         "name": "OmniDocBench",
         "version": "v1.6"

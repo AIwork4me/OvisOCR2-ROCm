@@ -1,4 +1,20 @@
 {
   "repo": "AIwork4me/OmniDocBench-ROCm",
-  "commit": "c1267cb1104e87bf9f8130875ce2f7da329ddcb4"
+  "commit": "4556ee1ab35eb53481e7392dcd555abe3e599551",
+  "central_repository": "AIwork4me/OmniDocBench-ROCm",
+  "central_commit": "4556ee1ab35eb53481e7392dcd555abe3e599551",
+  "central_commit_branch": "round2-convergence-foundation",
+  "central_commit_note": "Immutable foundation commit carrying the Round-2 contract surface (identity v3, source-import, producer/platform split, comparison tracks, conformance ladder, license split, ADRs 0013-0020). Pinned by OvisOCR2 as the round-2 reference template.",
+  "cohort": {
+    "contract_release": "rocmdoc-contracts-0.4.0",
+    "conformance_release": "rocmdoc-conformance-0.4.0",
+    "central_commit": "4556ee1ab35eb53481e7392dcd555abe3e599551"
+  },
+  "schema_versions": {
+    "model_card_v2": 2,
+    "result_record": "round-2-additive",
+    "run_spec": "v3",
+    "license_split": "round-2-additive"
+  },
+  "round2_features": ["producer_assurance", "run_spec_hash", "comparison_track_id", "primary_selection", "licenses(code|model)", "source-import-ready"]
 }
