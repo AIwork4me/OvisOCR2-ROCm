@@ -1,0 +1,27 @@
+# MAINTAINERS.yaml — OvisOCR2-ROCm ownership & review scope
+# ROCmDoc Standard 1.0 §10 QS-6. Fill in real adapter-owner handles; do NOT
+# fabricate. Central platform ownership: AIwork4me/OmniDocBench-ROCm/MAINTAINERS.yaml.
+
+schema_version: 1
+repo: AIwork4me/OvisOCR2-ROCm
+model_id: ovisocr2
+default_owner: "@AIwork4me"            # replace with the real adapter owner
+default_reviewers: ["@AIwork4me"]
+
+areas:
+  - area: adapter
+    path: adapter/
+    owners: ["@AIwork4me"]
+    reviewers: ["@AIwork4me"]
+  - area: backend-vllm
+    path: src/ovisocr2_rocm/
+    owners: ["@AIwork4me"]
+    reviewers: ["@AIwork4me"]
+    notes: "linux-rocm vLLM bf16 (supported); windows-hip unsupported (community-wanted)."
+  - area: evidence
+    path: results/
+    owners: ["@AIwork4me"]
+    reviewers: ["@AIwork4me"]
+    notes: "Provenance + prediction manifest; canonical rows are importer-generated."
+
+# This repo locks the central ROCmDoc contract commit in .rocmdoc/spec-lock.json.
